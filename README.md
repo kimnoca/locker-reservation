@@ -1,1 +1,1 @@
-# Yeung
+# 사물함 예약 시스템 backend repository
