@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.domain.user.dto.RegisterRequestDto;
-import yu.cse.locker.domain.user.dto.UserDto;
 
 
 @RestController()
