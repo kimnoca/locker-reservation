@@ -13,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenDto {
+
 //    private String refreshToken; 추후 필요할시 구현
     private String accessToken;
 }

@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/user/signup").permitAll()
                 .requestMatchers("/api/user/login").permitAll()
+                .requestMatchers("/api/user/phone-validate").permitAll()
 //                .requestMatchers("/api/user/**").permitAll()
                 .anyRequest().authenticated()
 
@@ -59,5 +60,21 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
+
+//    @Bean //  Deprecated 대처용
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/blog/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .formLogin(formLogin -> formLogin
+//                        .loginPage("/login")
+//                        .permitAll()
+//                )
+//                .rememberMe(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
 
 }
