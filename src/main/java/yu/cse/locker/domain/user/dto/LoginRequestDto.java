@@ -18,7 +18,7 @@ import lombok.Setter;
 public class LoginRequestDto {
 
     @NotNull
-    @Size(min = 3, max = 50)
+    @Size(min = 8, max = 8)
     private String studentId;
 
     @NotNull

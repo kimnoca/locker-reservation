@@ -2,12 +2,7 @@ package yu.cse.locker.domain.user.api;
 
 
 import jakarta.validation.Valid;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
-import net.nurigo.sdk.message.model.Message;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
-import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +30,9 @@ import yu.cse.locker.global.auth.TokenProvider;
 public class UserController {
     private final UserService userService;
     private final TokenProvider tokenProvider;
-    private final DefaultMessageService messageService;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private static final String SERVICE_NAME = "[영남대학교 컴퓨터학부 사물함 예약 시스템]";
-    private static final int CERTIFICATION_NUMBER_SIZE = 4;
+
 
     @PostMapping("/signup")
     public ResponseEntity<User> singUp(@RequestBody @Valid RegisterRequestDto RegisterRequestDto) {
@@ -66,40 +59,15 @@ public class UserController {
 //        return "token";
 //    }
 
-    @PostMapping("/phone-validate")
-    public ResponseEntity<PhoneNumberDto> phoneValidate(@Valid @RequestBody PhoneNumberDto phoneNumberDto) {
-
-        Message message = new Message();
-
-        System.out.println(phoneNumberDto.getPhoneNumber());
-
-        message.setFrom("01024419667");
-        message.setTo(phoneNumberDto.getPhoneNumber());
-
-        message.setText(SERVICE_NAME + "\n인증번호는 " + createCertificationNumber() + "입니다.");
-
-        SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        System.out.println(response);
-
-        return null;
+    // 추후에 객체를 return 하는 방향으로 리팩토링이 필요함 (응답 메시지로 표현이 필요해 보임)
+    @PostMapping("/phone-certification")
+    public ResponseEntity<String> phoneCertification(@Valid @RequestBody PhoneNumberDto phoneNumberDto) {
+        return ResponseEntity.ok(userService.sendCertificationMessage(phoneNumberDto));
     }
 
-    @PostMapping("/check-validate-number")
-    public ResponseEntity<CertificationNumberDto> validateNumberCheck(@Valid @RequestBody CertificationNumberDto phoneValidateDto) {
-        return null;
+    @PostMapping("/certification-check")
+    public ResponseEntity<String> certificationNumberCheck(
+            @RequestBody @Valid CertificationNumberDto certificationNumberDto) {
+        return ResponseEntity.ok(userService.verifyCertificationMessage(certificationNumberDto));
     }
-
-    public String createCertificationNumber() {
-
-        StringBuilder certificationNumber = new StringBuilder();
-
-        Random random = new Random();
-        for (int i = 0; i < CERTIFICATION_NUMBER_SIZE; i++) {
-            certificationNumber.append(random.nextInt(10));
-        }
-
-        return certificationNumber.toString();
-    }
-
-
 }

@@ -1,11 +1,10 @@
 package yu.cse.locker.domain.user.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -16,6 +15,7 @@ public class CertificationNumberDto {
     private String phoneNumber;
 
     @NotNull
+    @Size(min = 4, max = 4, message = "4글자 인증번호를 입력해주세요")
     private String certificationNumber;
 
 }
