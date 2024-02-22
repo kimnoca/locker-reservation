@@ -9,6 +9,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import yu.cse.locker.domain.locker.domain.Locker;
 
 @Builder
 @RequiredArgsConstructor
@@ -53,6 +56,9 @@ public class User implements UserDetails {
     @Column(name = "department_name")
     private String departmentName;
 
+    @OneToOne
+    @JoinColumn(name = "locker_id")
+    private Locker locker;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default

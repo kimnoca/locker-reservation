@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getStudentId(), loginRequestDto.getPassword());
@@ -58,6 +58,7 @@ public class UserController {
 //    public String tokenTest() {
 //        return "token";
 //    }
+    // TODO : 전역적인 응답 메시지, exception handling 메시지 구현 필요함
 
     // 추후에 객체를 return 하는 방향으로 리팩토링이 필요함 (응답 메시지로 표현이 필요해 보임)
     @PostMapping("/phone-certification")
