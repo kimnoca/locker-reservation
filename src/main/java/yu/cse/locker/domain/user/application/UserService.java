@@ -8,6 +8,7 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.locker.domain.user.dao.MessageRepository;
@@ -16,6 +17,8 @@ import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.domain.user.dto.CertificationNumberDto;
 import yu.cse.locker.domain.user.dto.PhoneNumberDto;
 import yu.cse.locker.domain.user.dto.RegisterRequestDto;
+import yu.cse.locker.global.exception.AlreadyExistUserException;
+import yu.cse.locker.global.exception.IsNotVerifyCertificationException;
 
 
 @Service
@@ -36,6 +39,11 @@ public class UserService {
 
     @Transactional
     public User singUp(RegisterRequestDto registerRequestDto) {
+
+        userRepository.findByStudentId(registerRequestDto.getStudentId())
+                .ifPresent(user -> {
+                    throw new AlreadyExistUserException("이미 존재하는 유저입니다.");
+                });
 
         User user = User.builder()
                 .studentId(registerRequestDto.getStudentId())
@@ -68,12 +76,11 @@ public class UserService {
         return "전송 성공";
     }
 
-    public String verifyCertificationMessage(CertificationNumberDto certificationNumberDto) {
+    public void verifyCertificationMessage(CertificationNumberDto certificationNumberDto) {
         if (isVerify(certificationNumberDto)) {
-            return "인증 실패";
+            throw new IsNotVerifyCertificationException("인증 실패");
         }
         messageRepository.deleteMassageCertification(certificationNumberDto.getPhoneNumber());
-        return "인증 성공";
     }
 
     private boolean isVerify(CertificationNumberDto certificationNumberDto) {

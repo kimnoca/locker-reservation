@@ -1,6 +1,7 @@
 package yu.cse.locker.domain.user.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class RegisterRequestDto {
     @NotNull
     @Size(min = 3, max = 50)
     private String studentId;
+
     @NotNull
     @Size(min = 3, max = 100)
     private String password;

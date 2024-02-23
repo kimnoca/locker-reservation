@@ -10,17 +10,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
+import yu.cse.locker.domain.user.dto.CertificationCheckResponseDto;
 import yu.cse.locker.domain.user.dto.CertificationNumberDto;
 import yu.cse.locker.domain.user.dto.LoginRequestDto;
+import yu.cse.locker.domain.user.dto.LoginResponseDto;
 import yu.cse.locker.domain.user.dto.PhoneNumberDto;
 import yu.cse.locker.domain.user.dto.RegisterRequestDto;
+import yu.cse.locker.domain.user.dto.RegisterResponseDto;
 import yu.cse.locker.domain.user.dto.TokenDto;
+import yu.cse.locker.global.DefaultResponse;
 import yu.cse.locker.global.auth.TokenProvider;
 
 
@@ -35,12 +40,14 @@ public class UserController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<User> singUp(@RequestBody @Valid RegisterRequestDto RegisterRequestDto) {
-        return ResponseEntity.ok(userService.singUp(RegisterRequestDto));
+    public ResponseEntity<?> singUp(@RequestBody @Valid RegisterRequestDto RegisterRequestDto) {
+        User user = userService.singUp(RegisterRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "회원가입 성공",
+                new RegisterResponseDto(user.getStudentId(), user.getStudentName())));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginRequestDto.getStudentId(), loginRequestDto.getPassword());
@@ -51,24 +58,29 @@ public class UserController {
 
         String accessToken = tokenProvider.createToken(authentication);
 
-        return new ResponseEntity<>(new TokenDto(accessToken), new HttpHeaders(), HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "로그인 성공",
+                new LoginResponseDto(authentication.getName(), accessToken)));
     }
 
 //    @GetMapping("/tokenTest")
 //    public String tokenTest() {
-//        return "token";
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("User "+ authentication.getName()); // access token 없을대 anonymousUser 임
+//        return null;
 //    }
+
     // TODO : 전역적인 응답 메시지, exception handling 메시지 구현 필요함
 
     // 추후에 객체를 return 하는 방향으로 리팩토링이 필요함 (응답 메시지로 표현이 필요해 보임)
-    @PostMapping("/phone-certification")
+    @PostMapping("/certification")
     public ResponseEntity<String> phoneCertification(@Valid @RequestBody PhoneNumberDto phoneNumberDto) {
         return ResponseEntity.ok(userService.sendCertificationMessage(phoneNumberDto));
     }
 
     @PostMapping("/certification-check")
-    public ResponseEntity<String> certificationNumberCheck(
+    public ResponseEntity<?> certificationNumberCheck(
             @RequestBody @Valid CertificationNumberDto certificationNumberDto) {
-        return ResponseEntity.ok(userService.verifyCertificationMessage(certificationNumberDto));
+        userService.verifyCertificationMessage(certificationNumberDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "인증 성공", null));
     }
 }
