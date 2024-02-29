@@ -73,8 +73,9 @@ public class UserController {
 
     // 추후에 객체를 return 하는 방향으로 리팩토링이 필요함 (응답 메시지로 표현이 필요해 보임)
     @PostMapping("/certification")
-    public ResponseEntity<String> phoneCertification(@Valid @RequestBody PhoneNumberDto phoneNumberDto) {
-        return ResponseEntity.ok(userService.sendCertificationMessage(phoneNumberDto));
+    public ResponseEntity<?> phoneCertification(@Valid @RequestBody PhoneNumberDto phoneNumberDto) {
+        userService.sendCertificationMessage(phoneNumberDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "전송 성공", null));
     }
 
     @PostMapping("/certification-check")

@@ -33,7 +33,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
-
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
@@ -57,6 +56,8 @@ public class SecurityConfig {
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
+
+        httpSecurity.cors();
 
         return httpSecurity.build();
     }
