@@ -13,6 +13,7 @@ import yu.cse.locker.global.auth.JwtAccessDeniedHandler;
 import yu.cse.locker.global.auth.JwtAuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import yu.cse.locker.global.auth.JwtSecurityConfig;
+import yu.cse.locker.global.auth.LoginFailHandler;
 import yu.cse.locker.global.auth.TokenProvider;
 
 @Configuration
@@ -23,6 +24,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final LoginFailHandler loginFailHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {

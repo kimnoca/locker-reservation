@@ -85,3 +85,4 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "인증 성공", null));
     }
 }
+
