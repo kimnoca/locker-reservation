@@ -89,7 +89,7 @@ public class TokenProvider implements InitializingBean {
         } catch (ExpiredJwtException e) {
 
             logger.info("만료된 JWT 토큰입니다.");
-        } catch (UnsupportedJwtException e) {   
+        } catch (UnsupportedJwtException e) {
 
             logger.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {

@@ -8,7 +8,6 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.locker.domain.user.dao.MessageRepository;
@@ -23,7 +22,6 @@ import yu.cse.locker.global.exception.IsNotVerifyCertificationException;
 
 @Service
 @RequiredArgsConstructor
-
 public class UserService {
 
     private final UserRepository userRepository;
@@ -57,7 +55,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String sendCertificationMessage(PhoneNumberDto phoneNumberDto) {
+    public void sendCertificationMessage(PhoneNumberDto phoneNumberDto) {
         Message message = new Message();
 
         message.setFrom("01024419667");
@@ -73,7 +71,6 @@ public class UserService {
 
         messageRepository.createMassageCertification(phoneNumberDto.getPhoneNumber(), certificationNumber);
 
-        return "전송 성공";
     }
 
     public void verifyCertificationMessage(CertificationNumberDto certificationNumberDto) {

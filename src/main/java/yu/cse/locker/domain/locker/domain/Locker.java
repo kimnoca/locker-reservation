@@ -30,17 +30,16 @@ public class Locker {
     private Long lockerId;
 
     // 주인 아이디 외래키
-    @Column(name = "owner_id")
-    private Long ownerId;
+    @Column(name = "owner_name")
+    private String ownerName;
 
     @Column(name = "room_location")
     private int roomLocation;
 
-    @Column(name = "coordinate_x")
-    private int coordinateX;
+    @Column(name = "locker_row")
+    private int row;
 
-    @Column(name = "coordinate_y")
-    private int coordinateY;
-
+    @Column(name = "locker_column")
+    private int column;
 
 }

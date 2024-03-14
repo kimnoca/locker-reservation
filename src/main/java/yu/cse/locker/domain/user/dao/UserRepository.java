@@ -9,4 +9,6 @@ import yu.cse.locker.domain.user.domain.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByStudentId(String studentId);
+
+    Long findUserIdByStudentId(String studentId);
 }

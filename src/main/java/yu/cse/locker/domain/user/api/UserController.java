@@ -10,11 +10,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import yu.cse.locker.domain.user.application.CustomUserDetailsService;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.domain.user.dto.CertificationCheckResponseDto;
@@ -34,6 +36,7 @@ import yu.cse.locker.global.auth.TokenProvider;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final CustomUserDetailsService customUserDetailsService;
     private final TokenProvider tokenProvider;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -58,16 +61,11 @@ public class UserController {
 
         String accessToken = tokenProvider.createToken(authentication);
 
-        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "로그인 성공",
-                new LoginResponseDto(authentication.getName(), accessToken)));
-    }
+        User loginUser = (User) customUserDetailsService.loadUserByUsername(authentication.getName());
 
-//    @GetMapping("/tokenTest")
-//    public String tokenTest() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("User "+ authentication.getName()); // access token 없을대 anonymousUser 임
-//        return null;
-//    }
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "로그인 성공",
+                new LoginResponseDto(loginUser.getStudentName(), accessToken)));
+    }
 
     // TODO : 전역적인 응답 메시지, exception handling 메시지 구현 필요함
 

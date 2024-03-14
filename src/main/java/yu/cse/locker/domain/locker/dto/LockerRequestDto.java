@@ -10,6 +10,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LockerRequestDto {
     private int roomLocation;
-    private int coordinateX;
-    private int coordinateY;
+    private int row;
+    private int column;
 }
