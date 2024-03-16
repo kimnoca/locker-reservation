@@ -71,7 +71,11 @@ public class LockerService {
                 lockerRequestDto.getRow());
     }
 
-//    public
+    public boolean checkDuplicationLocker(LockerRequestDto lockerRequestDto) {
+        Optional<Locker> locker = lockerRepository.findLockerByRoomLocationAndColumnAndRow(
+                lockerRequestDto.getRoomLocation(), lockerRequestDto.getColumn(), lockerRequestDto.getRow());
+        return locker.isPresent();
+    }
 
 
     @Transactional

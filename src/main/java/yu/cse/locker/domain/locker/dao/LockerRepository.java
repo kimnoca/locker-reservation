@@ -23,7 +23,6 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
     @Query("update Locker l set l.roomLocation=:location , l.column=:column, l.row=:row")
     void updateLocker(int location, int column, int row);
 
-//    @Query("select Locker as l from Locker where l.roomLocation = :location and l.column =:column and l.row = :row")
-//    Locker checkConflitLocker(int location, int column, int row);
+    Optional<Locker> findLockerByRoomLocationAndColumnAndRow(int location, int column, int row);
 
 }

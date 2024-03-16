@@ -23,6 +23,7 @@ import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
+import yu.cse.locker.global.ErrorResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,8 +37,8 @@ public class LockerController {
     @PostMapping("/reservation")
     public ResponseEntity<?> reservationLocker(@RequestBody LockerRequestDto lockerRequestDto,
                                                @AuthenticationPrincipal UserDetails user) {
-
         // 내가 다른사람의 사물함을 예약 하려고 시도 하면?
+
 
         Optional<User> ownerUser = userService.getUser(user.getUsername());
 
@@ -46,7 +47,7 @@ public class LockerController {
         Locker userLocker = lockerService.getLockerByUser(currentUser);
 
         if (userLocker != null) {
-            if (checkSameLocker(userLocker, lockerRequestDto)) {
+            if (checkSameRequestLockerAndUserLocker(userLocker, lockerRequestDto)) {
                 lockerService.unReservationLocker(userLocker.getLockerId());
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
@@ -55,6 +56,11 @@ public class LockerController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new DefaultResponse<>(201, "예약 성공", lockerRequestDto));
         }
+
+        if(lockerService.checkDuplicationLocker(lockerRequestDto)){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse(409, "이미 사용중인 사물함 입니다."));
+        };
 
         Locker locker = lockerService.reservationLocker(lockerRequestDto, currentUser);
 
@@ -88,7 +94,7 @@ public class LockerController {
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "조회 성공", lockerListResponseDto));
     }
 
-    public boolean checkSameLocker(Locker userLocker, LockerRequestDto currentLocker) {
+    public boolean checkSameRequestLockerAndUserLocker(Locker userLocker, LockerRequestDto currentLocker) {
         if (userLocker.getRoomLocation() == currentLocker.getRoomLocation()
                 && userLocker.getColumn() == currentLocker.getColumn()
                 && userLocker.getRow() == currentLocker.getRow()) {
