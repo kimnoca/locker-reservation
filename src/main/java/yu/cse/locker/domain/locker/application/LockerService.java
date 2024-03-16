@@ -2,12 +2,14 @@ package yu.cse.locker.domain.locker.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.locker.domain.locker.dao.LockerRepository;
 import yu.cse.locker.domain.locker.domain.Locker;
+import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
+import yu.cse.locker.domain.locker.dto.LockerResponseDto;
+import yu.cse.locker.domain.user.domain.User;
 
 @Service
 @RequiredArgsConstructor
@@ -16,10 +18,12 @@ public class LockerService {
     private final LockerRepository lockerRepository;
 
     @Transactional
-    public Locker reservationLocker(LockerRequestDto lockerRequestDto, String studentId) {
+    public Locker reservationLocker(LockerRequestDto lockerRequestDto, User user) {
+
+        System.out.println(user);
 
         Locker locker = Locker.builder()
-                .ownerName(studentId)
+                .user(user)
                 .roomLocation(lockerRequestDto.getRoomLocation())
                 .row(lockerRequestDto.getRow())
                 .column(lockerRequestDto.getColumn())
@@ -31,8 +35,43 @@ public class LockerService {
         return lockerRepository.save(locker);
     }
 
-    public List<Locker> lockerList(int locationRoom) {
-        return null;
+    public Locker getLockerByUser(User user) {
+        return lockerRepository.findLockerByUser(user);
+    }
+
+    public LockerListResponseDto lockerList(int locationRoom) {
+
+//        Optional<Locker> currentUserLocker = null;
+//
+//        if (!user.getUsername().equals("anonymousUser")){
+//            currentUserLocker = lockerRepository.findLockerByOwnerName(user.getUsername());
+//        }
+
+        List<Locker> lockers = lockerRepository.findLockersByRoomLocation(locationRoom);
+
+        List<LockerResponseDto> lockerResponseDtoList = lockers.stream()
+                .map(locker -> new LockerResponseDto(locker.getRoomLocation(), locker.getRow(), locker.getColumn()))
+                .toList();
+
+        return LockerListResponseDto
+                .builder()
+                .maxRow(5)
+                .maxColumn(5)
+//                .myLocker()
+                .lockers(lockerResponseDtoList)
+                .build();
+    }
+
+    public void updateLockerLocation(LockerRequestDto lockerRequestDto) {
+        lockerRepository.updateLocker(lockerRequestDto.getRoomLocation(), lockerRequestDto.getColumn(), lockerRequestDto.getRow());
+    }
+
+//    public
+
+
+    @Transactional
+    public void unReservationLocker(Long id) {
+        lockerRepository.deleteById(id);
     }
 
 }

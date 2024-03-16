@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers("/api/user/certification").permitAll()
                 .requestMatchers("/api/user/certification-check").permitAll()
+                .requestMatchers("/api/locker/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

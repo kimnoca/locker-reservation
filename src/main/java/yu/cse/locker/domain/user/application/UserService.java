@@ -1,6 +1,7 @@
 package yu.cse.locker.domain.user.application;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import net.nurigo.sdk.message.model.Message;
@@ -34,6 +35,10 @@ public class UserService {
     private static final String SERVICE_NAME = "[영남대학교 컴퓨터학부 사물함 예약 시스템]";
     private static final int CERTIFICATION_NUMBER_SIZE = 4;
 
+
+    public Optional<User> getUser(String studentId) {
+        return userRepository.findByStudentId(studentId);
+    }
 
     @Transactional
     public User singUp(RegisterRequestDto registerRequestDto) {

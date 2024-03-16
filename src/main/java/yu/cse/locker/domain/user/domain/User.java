@@ -2,6 +2,7 @@ package yu.cse.locker.domain.user.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -35,11 +36,12 @@ import yu.cse.locker.domain.locker.domain.Locker;
 @Setter
 public class User implements UserDetails {
 
-    @JsonIgnore
     @Id
+    @JsonIgnore
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
 
     @Column(name = "student_id")
     private String studentId;
@@ -57,7 +59,7 @@ public class User implements UserDetails {
     private String departmentName;
 
     @OneToOne
-    @JoinColumn(name = "locker_id")
+    @JoinColumn(name = "locker_id", unique = true)
     private Locker locker;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -69,6 +71,10 @@ public class User implements UserDetails {
         return this.authorities.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
+    }
+
+    private User getUser() {
+        return this;
     }
 
     @Override
