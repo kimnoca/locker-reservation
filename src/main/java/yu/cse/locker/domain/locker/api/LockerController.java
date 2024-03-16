@@ -48,7 +48,7 @@ public class LockerController {
         if (userLocker != null) {
             if (checkSameLocker(userLocker, lockerRequestDto)) {
                 lockerService.unReservationLocker(userLocker.getLockerId());
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                return ResponseEntity.status(HttpStatus.OK)
                         .body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
             }
             lockerService.updateLockerLocation(lockerRequestDto);
