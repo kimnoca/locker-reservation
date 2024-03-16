@@ -1,6 +1,7 @@
 package yu.cse.locker.domain.locker.application;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,10 @@ public class LockerService {
         return lockerRepository.findLockerByUser(user);
     }
 
+    public Optional<Locker> getLockerByStudentId(String studentId) {
+        return lockerRepository.findLockerByUser_StudentId(studentId);
+    }
+
     public LockerListResponseDto lockerList(int locationRoom) {
 
 //        Optional<Locker> currentUserLocker = null;
@@ -57,13 +62,13 @@ public class LockerService {
                 .builder()
                 .maxRow(5)
                 .maxColumn(5)
-//                .myLocker()
                 .lockers(lockerResponseDtoList)
                 .build();
     }
 
     public void updateLockerLocation(LockerRequestDto lockerRequestDto) {
-        lockerRepository.updateLocker(lockerRequestDto.getRoomLocation(), lockerRequestDto.getColumn(), lockerRequestDto.getRow());
+        lockerRepository.updateLocker(lockerRequestDto.getRoomLocation(), lockerRequestDto.getColumn(),
+                lockerRequestDto.getRow());
     }
 
 //    public

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,12 +46,14 @@ public class LockerController {
         Locker userLocker = lockerService.getLockerByUser(currentUser);
 
         if (userLocker != null) {
-            if (checkSameLocker(userLocker, lockerRequestDto)){
+            if (checkSameLocker(userLocker, lockerRequestDto)) {
                 lockerService.unReservationLocker(userLocker.getLockerId());
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
             }
             lockerService.updateLockerLocation(lockerRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "예약 성공", lockerRequestDto));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new DefaultResponse<>(201, "예약 성공", lockerRequestDto));
         }
 
         Locker locker = lockerService.reservationLocker(lockerRequestDto, currentUser);
@@ -65,15 +68,24 @@ public class LockerController {
     }
 
     @GetMapping("/{location}")
-    public ResponseEntity<?> lockersList(@PathVariable("location") int location) {
+    public ResponseEntity<?> lockersList(@PathVariable("location") int location,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+        LockerListResponseDto lockerListResponseDto = lockerService.lockerList(location);
 
-//        if (user == null){
-//
-//        }
+        if (userDetails == null) {
+            lockerListResponseDto.setMyLocker(null);
+        } else {
+            Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername());
+            if (myLockerOptional.isPresent()) {
+                Locker myLocker = myLockerOptional.get();
+                lockerListResponseDto.setMyLocker(
+                        new LockerResponseDto(myLocker.getRoomLocation(), myLocker.getRow(), myLocker.getColumn()));
+            } else {
+                lockerListResponseDto.setMyLocker(null);
+            }
+        }
 
-        LockerListResponseDto lockerResponseDto = lockerService.lockerList(location);
-
-        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "조회 성공", lockerResponseDto));
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "조회 성공", lockerListResponseDto));
     }
 
     public boolean checkSameLocker(Locker userLocker, LockerRequestDto currentLocker) {
