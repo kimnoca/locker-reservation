@@ -12,16 +12,6 @@ import yu.cse.locker.domain.locker.domain.Locker;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LockerResponseDto {
-    private int location;
     private int row;
     private int col;
-
-    public static LockerResponseDto of(Locker locker){
-        return LockerResponseDto
-                .builder()
-                .col(locker.getColumn())
-                .row(locker.getRow())
-                .location(locker.getRoomLocation())
-                .build();
-    }
 }

@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +23,7 @@ import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
 import yu.cse.locker.global.ErrorResponse;
+import yu.cse.locker.global.exception.AlreadyExistLockerException;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,8 +37,6 @@ public class LockerController {
     @PostMapping("/reservation")
     public ResponseEntity<?> reservationLocker(@RequestBody LockerRequestDto lockerRequestDto,
                                                @AuthenticationPrincipal UserDetails user) {
-        // 내가 다른사람의 사물함을 예약 하려고 시도 하면?
-
 
         Optional<User> ownerUser = userService.getUser(user.getUsername());
 
@@ -57,10 +55,9 @@ public class LockerController {
                     .body(new DefaultResponse<>(201, "예약 성공", lockerRequestDto));
         }
 
-        if(lockerService.checkDuplicationLocker(lockerRequestDto)){
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ErrorResponse(409, "이미 사용중인 사물함 입니다."));
-        };
+        if (lockerService.checkDuplicationLocker(lockerRequestDto)) {
+            throw new AlreadyExistLockerException("이미 사용중인 사물함 입니다.");
+        }
 
         Locker locker = lockerService.reservationLocker(lockerRequestDto, currentUser);
 
@@ -85,7 +82,7 @@ public class LockerController {
             if (myLockerOptional.isPresent()) {
                 Locker myLocker = myLockerOptional.get();
                 lockerListResponseDto.setMyLocker(
-                        new LockerResponseDto(myLocker.getRoomLocation(), myLocker.getRow(), myLocker.getColumn()));
+                        new LockerResponseDto(myLocker.getRow(), myLocker.getColumn()));
             } else {
                 lockerListResponseDto.setMyLocker(null);
             }
@@ -102,6 +99,5 @@ public class LockerController {
         }
         return false;
     }
-
 
 }

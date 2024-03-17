@@ -11,6 +11,7 @@ import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
 import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.domain.User;
+import yu.cse.locker.global.exception.AlreadyExistLockerException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,17 +22,12 @@ public class LockerService {
     @Transactional
     public Locker reservationLocker(LockerRequestDto lockerRequestDto, User user) {
 
-        System.out.println(user);
-
         Locker locker = Locker.builder()
                 .user(user)
                 .roomLocation(lockerRequestDto.getRoomLocation())
                 .row(lockerRequestDto.getRow())
                 .column(lockerRequestDto.getColumn())
                 .build();
-
-//        lockerRepository.findLockerByOwnerName(user.getUsername()); // 사용자가 에약한 사물함과 같은 사물함이면 취소
-        // 예약한 사물함이 있는데 옮기는 경우?
 
         return lockerRepository.save(locker);
     }
@@ -46,16 +42,10 @@ public class LockerService {
 
     public LockerListResponseDto lockerList(int locationRoom) {
 
-//        Optional<Locker> currentUserLocker = null;
-//
-//        if (!user.getUsername().equals("anonymousUser")){
-//            currentUserLocker = lockerRepository.findLockerByOwnerName(user.getUsername());
-//        }
-
         List<Locker> lockers = lockerRepository.findLockersByRoomLocation(locationRoom);
 
         List<LockerResponseDto> lockerResponseDtoList = lockers.stream()
-                .map(locker -> new LockerResponseDto(locker.getRoomLocation(), locker.getRow(), locker.getColumn()))
+                .map(locker -> new LockerResponseDto(locker.getRow(), locker.getColumn()))
                 .toList();
 
         return LockerListResponseDto

@@ -19,14 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import yu.cse.locker.domain.user.application.CustomUserDetailsService;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
-import yu.cse.locker.domain.user.dto.CertificationCheckResponseDto;
 import yu.cse.locker.domain.user.dto.CertificationNumberDto;
 import yu.cse.locker.domain.user.dto.LoginRequestDto;
 import yu.cse.locker.domain.user.dto.LoginResponseDto;
 import yu.cse.locker.domain.user.dto.PhoneNumberDto;
 import yu.cse.locker.domain.user.dto.RegisterRequestDto;
 import yu.cse.locker.domain.user.dto.RegisterResponseDto;
-import yu.cse.locker.domain.user.dto.TokenDto;
 import yu.cse.locker.global.DefaultResponse;
 import yu.cse.locker.global.auth.TokenProvider;
 
