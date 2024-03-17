@@ -1,7 +1,6 @@
 package yu.cse.locker.global;
 
 
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,15 +26,6 @@ public class GlobalExceptionHandler {
                 .httpStatusCode(400)
                 .responseMessage(ex.getMessage()).build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    private ResponseEntity<?> loginExceptionHandler(AlreadyExistLockerException ex) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .httpStatusCode(401)
-                .responseMessage(ex.getMessage())
-                .build();
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AlreadyExistLockerException.class)

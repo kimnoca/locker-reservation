@@ -61,6 +61,10 @@ public class UserService {
     }
 
     public void sendCertificationMessage(PhoneNumberDto phoneNumberDto) {
+        if (messageRepository.checkHasPhoneNumber(phoneNumberDto.getPhoneNumber())) { // 이미 있으면 삭제후 다시 전송
+            messageRepository.deleteMassageCertification(phoneNumberDto.getPhoneNumber());
+        }
+
         Message message = new Message();
 
         message.setFrom("01024419667");
@@ -69,10 +73,6 @@ public class UserService {
         message.setText(SERVICE_NAME + "\n인증번호는 " + certificationNumber + "입니다.");
 
         SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-
-//        if (messageRepository.checkHasPhoneNumber(phoneNumberDto.getPhoneNumber())){ // 이미 있으면 삭제후 다시 전송
-//            messageRepository.deleteMassageCertification(phoneNumberDto.getPhoneNumber());
-//        }
 
         messageRepository.createMassageCertification(phoneNumberDto.getPhoneNumber(), certificationNumber);
 

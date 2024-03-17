@@ -24,7 +24,6 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
     void updateLocker(int location, int column, int row);
 
 
-
     Optional<Locker> findLockerByRoomLocationAndColumnAndRow(int location, int column, int row);
 
 }

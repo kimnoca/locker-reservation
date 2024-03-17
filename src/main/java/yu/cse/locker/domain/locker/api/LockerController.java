@@ -2,9 +2,11 @@ package yu.cse.locker.domain.locker.api;
 
 
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,6 @@ import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
-import yu.cse.locker.global.ErrorResponse;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
 
 @Controller
@@ -38,15 +39,21 @@ public class LockerController {
     public ResponseEntity<?> reservationLocker(@RequestBody LockerRequestDto lockerRequestDto,
                                                @AuthenticationPrincipal UserDetails user) {
 
+        if (user == null) {
+            throw new InsufficientAuthenticationException("");
+        }
+
         Optional<User> ownerUser = userService.getUser(user.getUsername());
 
         User currentUser = ownerUser.orElseThrow(() -> new IllegalStateException("User not found"));
 
-        Locker userLocker = lockerService.getLockerByUser(currentUser);
+        Optional<Locker> userLocker = lockerService.getLockerByStudentId(user.getUsername());
 
-        if (userLocker != null) {
-            if (checkSameRequestLockerAndUserLocker(userLocker, lockerRequestDto)) {
-                lockerService.unReservationLocker(userLocker.getLockerId());
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userLocker);
+
+        if (userLocker.isPresent()) {
+            if (checkSameRequestLockerAndUserLocker(userLocker.get(), lockerRequestDto)) {
+                lockerService.unReservationLocker(userLocker.get().getLockerId());
                 return ResponseEntity.status(HttpStatus.OK)
                         .body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
             }

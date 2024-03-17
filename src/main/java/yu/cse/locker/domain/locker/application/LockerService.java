@@ -11,7 +11,6 @@ import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
 import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.domain.User;
-import yu.cse.locker.global.exception.AlreadyExistLockerException;
 
 @Service
 @RequiredArgsConstructor
