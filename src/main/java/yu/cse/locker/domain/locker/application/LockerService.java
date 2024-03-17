@@ -37,6 +37,8 @@ public class LockerService {
             if (checkSameRequestLockerAndUserLocker(currentUserLocker, lockerRequestDto)) {
                 lockerRepository.deleteById(currentUserLocker.getLockerId());
                 return null;
+            } else {
+                throw new AlreadyExistLockerException("이미 사용중인 사물함이 있습니다.");
             }
         }
 
