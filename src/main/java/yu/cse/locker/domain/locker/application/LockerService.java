@@ -1,6 +1,7 @@
 package yu.cse.locker.domain.locker.application;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,7 @@ import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
+import yu.cse.locker.global.exception.AlreadyExistUserException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
 
 @Service
@@ -36,10 +38,10 @@ public class LockerService {
                 lockerRepository.deleteById(currentUserLocker.getLockerId());
                 return null;
             }
-            if (findLockerByLockerInformation(lockerRequestDto).isPresent()) {
-                throw new AlreadyExistLockerException("이미 사용중인 사물함 입니다.");
-            }
-            throw new AlreadyExistLockerException("이미 사용중인 사물함이 있습니다.");
+        }
+
+        if (findLockerByLockerInformation(lockerRequestDto).isPresent()) {
+            throw new AlreadyExistLockerException("이미 사용중인 사물함 입니다.");
         }
 
         Locker locker = Locker.builder()
@@ -52,19 +54,12 @@ public class LockerService {
         return lockerRepository.save(locker);
     }
 
-    @Transactional
-    public void unReservationLocker(LockerRequestDto lockerRequestDto, UserDetails userDetails) {
-
-    }
-
-
-
     public Locker getLockerByUser(User user) {
         return lockerRepository.findLockerByUser(user);
     }
 
-    public Optional<Locker> getLockerByStudentId(String studentId) {
-        return lockerRepository.findLockerByUser_StudentId(studentId);
+    public Optional<Locker> getLockerByStudentId(String studentId, int location) {
+        return lockerRepository.findLockerByUser_StudentIdAndRoomLocation(studentId, location);
     }
 
     public LockerListResponseDto lockerList(int locationRoom) {

@@ -37,7 +37,7 @@ public class LockerController {
     private final LockerService lockerService;
 
     @Transactional
-    @PostMapping("/reservation-new")
+    @PostMapping("/reservation")
     public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto,
                                                   @AuthenticationPrincipal UserDetails user) {
 
@@ -56,7 +56,6 @@ public class LockerController {
     }
 
 
-
     @GetMapping("/{location}")
     public ResponseEntity<?> lockersList(@PathVariable("location") int location,
                                          @AuthenticationPrincipal UserDetails userDetails) {
@@ -65,9 +64,10 @@ public class LockerController {
         if (userDetails == null) {
             lockerListResponseDto.setMyLocker(null);
         } else {
-            Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername());
+            Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername(), location);
             if (myLockerOptional.isPresent()) {
                 Locker myLocker = myLockerOptional.get();
+                System.out.println(myLocker);
                 lockerListResponseDto.setMyLocker(
                         new LockerResponseDto(myLocker.getRow(), myLocker.getColumn()));
             }
