@@ -27,6 +27,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding("utf-8");
 
         String errorMsg = getExceptionMessage(authException);
+        System.out.println(errorMsg);
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
                 .responseMessage(errorMsg)

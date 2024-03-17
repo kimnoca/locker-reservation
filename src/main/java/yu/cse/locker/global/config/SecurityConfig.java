@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers("/api/user/certification").permitAll()
                 .requestMatchers("/api/user/certification-check").permitAll()
-                .requestMatchers("/api/locker/**").permitAll()
+                .requestMatchers("/api/locker/{location}").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
@@ -64,17 +64,12 @@ public class SecurityConfig {
     }
 
 //    @Bean //  Deprecated 대처용
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//    public SecurityFilterChain filterChainNew(HttpSecurity http) throws Exception {
 //        http
 //                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/blog/**").permitAll()
+//                        .requestMatchers("/api/user/**").permitAll()
 //                        .anyRequest().authenticated()
-//                )
-//                .formLogin(formLogin -> formLogin
-//                        .loginPage("/login")
-//                        .permitAll()
-//                )
-//                .rememberMe(Customizer.withDefaults());
+//                );
 //
 //        return http.build();
 //    }

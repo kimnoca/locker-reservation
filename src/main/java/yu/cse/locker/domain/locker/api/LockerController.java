@@ -1,9 +1,11 @@
 package yu.cse.locker.domain.locker.api;
 
 
+import java.security.Security;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -25,6 +27,7 @@ import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
+import yu.cse.locker.global.exception.NotAuthenticationException;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,50 +35,27 @@ import yu.cse.locker.global.exception.AlreadyExistLockerException;
 public class LockerController {
 
     private final LockerService lockerService;
-    private final UserService userService;
 
     @Transactional
-    @PostMapping("/reservation")
-    public ResponseEntity<?> reservationLocker(@RequestBody LockerRequestDto lockerRequestDto,
-                                               @AuthenticationPrincipal UserDetails user) {
+    @PostMapping("/reservation-new")
+    public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto,
+                                                  @AuthenticationPrincipal UserDetails user) {
 
         if (user == null) {
-            throw new InsufficientAuthenticationException("");
+            throw new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요");
         }
 
-        Optional<User> ownerUser = userService.getUser(user.getUsername());
+        Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, user);
 
-        User currentUser = ownerUser.orElseThrow(() -> new IllegalStateException("User not found"));
-
-        Optional<Locker> userLocker = lockerService.getLockerByStudentId(user.getUsername());
-
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userLocker);
-
-        if (userLocker.isPresent()) {
-            if (checkSameRequestLockerAndUserLocker(userLocker.get(), lockerRequestDto)) {
-                lockerService.unReservationLocker(userLocker.get().getLockerId());
-                return ResponseEntity.status(HttpStatus.OK)
-                        .body(new DefaultResponse<>(204, "예약 취소", lockerRequestDto));
-            }
-            lockerService.updateLockerLocation(lockerRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new DefaultResponse<>(201, "예약 성공", lockerRequestDto));
+        if (reservationLocker == null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "예약 취소", null));
         }
-
-        if (lockerService.checkDuplicationLocker(lockerRequestDto)) {
-            throw new AlreadyExistLockerException("이미 사용중인 사물함 입니다.");
-        }
-
-        Locker locker = lockerService.reservationLocker(lockerRequestDto, currentUser);
-
-        LockerResponseDto lockerResponseDto = LockerResponseDto
-                .builder()
-                .row(locker.getRow())
-                .col(locker.getColumn())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "예약 성공", lockerResponseDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "예약 성공",
+                new LockerRequestDto(reservationLocker.getRoomLocation(), reservationLocker.getRow(),
+                        reservationLocker.getColumn())));
     }
+
+
 
     @GetMapping("/{location}")
     public ResponseEntity<?> lockersList(@PathVariable("location") int location,
@@ -90,21 +70,11 @@ public class LockerController {
                 Locker myLocker = myLockerOptional.get();
                 lockerListResponseDto.setMyLocker(
                         new LockerResponseDto(myLocker.getRow(), myLocker.getColumn()));
-            } else {
-                lockerListResponseDto.setMyLocker(null);
             }
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "조회 성공", lockerListResponseDto));
     }
 
-    public boolean checkSameRequestLockerAndUserLocker(Locker userLocker, LockerRequestDto currentLocker) {
-        if (userLocker.getRoomLocation() == currentLocker.getRoomLocation()
-                && userLocker.getColumn() == currentLocker.getColumn()
-                && userLocker.getRow() == currentLocker.getRow()) {
-            return true;
-        }
-        return false;
-    }
 
 }

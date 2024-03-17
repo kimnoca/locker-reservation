@@ -8,6 +8,7 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,5 +100,9 @@ public class UserService {
             certificationNumber.append(random.nextInt(10));
         }
         return certificationNumber.toString();
+    }
+
+    public Optional<User> getCurrentUser(UserDetails userDetails) {
+        return userRepository.findByStudentId(userDetails.getUsername());
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
 import yu.cse.locker.global.exception.AlreadyExistUserException;
 import yu.cse.locker.global.exception.IsNotVerifyCertificationException;
+import yu.cse.locker.global.exception.NotAuthenticationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,6 +27,15 @@ public class GlobalExceptionHandler {
                 .httpStatusCode(400)
                 .responseMessage(ex.getMessage()).build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(NotAuthenticationException.class)
+    private ResponseEntity<?> notAuthenticationExceptionHandler(NotAuthenticationException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(401)
+                .responseMessage(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
     @ExceptionHandler(AlreadyExistLockerException.class)
