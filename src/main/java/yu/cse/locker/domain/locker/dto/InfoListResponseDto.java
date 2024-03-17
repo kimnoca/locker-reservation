@@ -13,10 +13,6 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LockerListResponseDto {
-    private int maxRow;
-    private int maxColumn;
-    //    private LockerResponseDto myLocker;
-    private MyLockerDto myLocker;
-    private List<LockerResponseDto> lockers;
+public class InfoListResponseDto {
+    private List<LockerInfoResponseDto> lockerInfoResponseDtoList;
 }

@@ -1,8 +1,10 @@
 package yu.cse.locker.global;
 
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
@@ -45,6 +47,16 @@ public class GlobalExceptionHandler {
                 .responseMessage(ex.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    private ResponseEntity<?> constraintViolationException(MethodArgumentNotValidException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(400)
+                .responseMessage(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
 }

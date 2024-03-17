@@ -23,6 +23,7 @@ import yu.cse.locker.domain.locker.application.LockerService;
 import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
 import yu.cse.locker.domain.locker.dto.LockerResponseDto;
+import yu.cse.locker.domain.locker.dto.MyLockerDto;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
@@ -69,12 +70,17 @@ public class LockerController {
                 Locker myLocker = myLockerOptional.get();
                 System.out.println(myLocker);
                 lockerListResponseDto.setMyLocker(
-                        new LockerResponseDto(myLocker.getRow(), myLocker.getColumn()));
+                        new MyLockerDto(myLocker.getRoomLocation(), myLocker.getRow(), myLocker.getColumn()));
             }
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "조회 성공", lockerListResponseDto));
     }
+
+//    @GetMapping("/admin/{location}")
+//    public ResponseEntity<?> adminLockerList(@PathVariable("location") int location) {
+//
+//    }
 
 
 }
