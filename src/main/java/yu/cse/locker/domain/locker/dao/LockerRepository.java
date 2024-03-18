@@ -16,7 +16,7 @@ public interface LockerRepository extends JpaRepository<Locker, Long> {
 
     Locker findLockerByUser(User User);
 
-    Optional<Locker> findLockerByUser_StudentIdAndRoomLocation(String studentId, int location);
+    Optional<Locker> findLockerByUser_StudentId(String studentId);
 
     Optional<Locker> findLockerByRoomLocationAndColumnAndRow(int location, int column, int row);
 

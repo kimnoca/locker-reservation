@@ -26,9 +26,9 @@ public class LockerService {
     private final UserService userService;
 
     @Transactional
-    public Locker reservationLocker(LockerRequestDto lockerRequestDto, UserDetails userDetails) {
+    public Locker reservationLocker(LockerRequestDto lockerRequestDto, String currentUser) {
 
-        User user = userService.getCurrentUser(userDetails)
+        User user = userService.getCurrentUser(currentUser)
                 .orElseThrow(() -> new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요"));
 
         Locker currentUserLocker = getLockerByUser(user);
@@ -60,8 +60,8 @@ public class LockerService {
         return lockerRepository.findLockerByUser(user);
     }
 
-    public Optional<Locker> getLockerByStudentId(String studentId, int location) {
-        return lockerRepository.findLockerByUser_StudentIdAndRoomLocation(studentId, location);
+    public Optional<Locker> getLockerByStudentId(String studentId) {
+        return lockerRepository.findLockerByUser_StudentId(studentId);
     }
 
     public LockerListResponseDto lockerList(int locationRoom) {

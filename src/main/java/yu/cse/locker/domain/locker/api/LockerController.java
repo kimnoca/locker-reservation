@@ -5,7 +5,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +33,13 @@ public class LockerController {
 
     @Transactional
     @PostMapping("/reservation")
-    public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto,
-                                                  @AuthenticationPrincipal UserDetails user) {
+    public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto) {
 
-        if (user == null) {
-            throw new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요");
-        }
+        Authentication token = SecurityContextHolder.getContext().getAuthentication();
 
-        Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, user);
+        String currentUser = token.getName();
+
+        Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, currentUser);
 
         if (reservationLocker == null) {
             return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "예약 취소", null));
@@ -57,7 +58,7 @@ public class LockerController {
         if (userDetails == null) {
             lockerListResponseDto.setMyLocker(null);
         } else {
-            Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername(), location);
+            Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername());
             if (myLockerOptional.isPresent()) {
                 Locker myLocker = myLockerOptional.get();
                 System.out.println(myLocker);

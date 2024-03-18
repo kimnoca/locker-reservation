@@ -102,7 +102,7 @@ public class UserService {
         return certificationNumber.toString();
     }
 
-    public Optional<User> getCurrentUser(UserDetails userDetails) {
-        return userRepository.findByStudentId(userDetails.getUsername());
+    public Optional<User> getCurrentUser(String username) {
+        return userRepository.findByStudentId(username);
     }
 }
