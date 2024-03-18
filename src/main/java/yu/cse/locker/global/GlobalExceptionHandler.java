@@ -11,6 +11,7 @@ import yu.cse.locker.global.exception.AlreadyExistLockerException;
 import yu.cse.locker.global.exception.AlreadyExistUserException;
 import yu.cse.locker.global.exception.IsNotVerifyCertificationException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
+import yu.cse.locker.global.exception.NotExistLockerException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -51,6 +52,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     private ResponseEntity<?> constraintViolationException(MethodArgumentNotValidException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .httpStatusCode(400)
+                .responseMessage(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(NotExistLockerException.class)
+    private ResponseEntity<?> noExistLockerExceptionHandler(NotExistLockerException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .httpStatusCode(400)
                 .responseMessage(ex.getMessage())

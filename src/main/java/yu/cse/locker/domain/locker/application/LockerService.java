@@ -17,6 +17,7 @@ import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
 import yu.cse.locker.global.exception.AlreadyExistUserException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
+import yu.cse.locker.global.exception.NotExistLockerException;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,17 @@ public class LockerService {
 
     public Optional<Locker> getLockerByStudentId(String studentId) {
         return lockerRepository.findLockerByUser_StudentId(studentId);
+    }
+
+    @Transactional
+    public void deleteLocker(String studentId) {
+//        User user = userService.getCurrentUser(studentId)
+//                .orElseThrow(() -> new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요"));
+
+        lockerRepository.findLockerByUser_StudentId(studentId)
+                .orElseThrow(() -> new NotExistLockerException("취소할 사물함 이 없습니다."));
+
+        lockerRepository.deleteLockerByUser_StudentId(studentId);
     }
 
     public LockerListResponseDto lockerList(int locationRoom) {

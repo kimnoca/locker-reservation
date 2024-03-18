@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,12 +42,22 @@ public class LockerController {
 
         Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, currentUser);
 
-        if (reservationLocker == null) {
-            return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "예약 취소", null));
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "예약 성공",
                 new LockerRequestDto(reservationLocker.getRoomLocation(), reservationLocker.getRow(),
                         reservationLocker.getColumn())));
+    }
+
+    @Transactional
+    @DeleteMapping("/reservation")
+    public ResponseEntity<?> unReservationLocker() {
+
+        Authentication token = SecurityContextHolder.getContext().getAuthentication();
+
+        String currentUser = token.getName();
+
+        lockerService.deleteLocker(currentUser);
+
+        return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "예약 취소", null));
     }
 
 

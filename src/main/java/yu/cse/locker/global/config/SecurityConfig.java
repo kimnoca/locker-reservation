@@ -4,6 +4,7 @@ package yu.cse.locker.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -52,7 +53,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/login").permitAll()
                 .requestMatchers("/api/user/certification").permitAll()
                 .requestMatchers("/api/user/certification-check").permitAll()
-                .requestMatchers("/api/locker/{location}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/locker/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
