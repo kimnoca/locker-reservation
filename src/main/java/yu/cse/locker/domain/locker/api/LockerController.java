@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +35,11 @@ public class LockerController {
 
     @Transactional
     @PostMapping("/reservation")
-    public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto) {
+    public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto,
+                                                  @AuthenticationPrincipal
+                                                  User user) {
 
-        Authentication token = SecurityContextHolder.getContext().getAuthentication();
-
-        String currentUser = token.getName();
-
-        Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, currentUser);
+        Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, user.getUsername());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "예약 성공",
                 new LockerRequestDto(reservationLocker.getRoomLocation(), reservationLocker.getRow(),
@@ -49,14 +48,9 @@ public class LockerController {
 
     @Transactional
     @DeleteMapping("/reservation")
-    public ResponseEntity<?> unReservationLocker() {
+    public ResponseEntity<?> unReservationLocker(@AuthenticationPrincipal User user) {
 
-        Authentication token = SecurityContextHolder.getContext().getAuthentication();
-
-        String currentUser = token.getName();
-
-        lockerService.deleteLocker(currentUser);
-
+        lockerService.deleteLocker(user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(new DefaultResponse<>(200, "예약 취소", null));
     }
 
@@ -72,7 +66,6 @@ public class LockerController {
             Optional<Locker> myLockerOptional = lockerService.getLockerByStudentId(userDetails.getUsername());
             if (myLockerOptional.isPresent()) {
                 Locker myLocker = myLockerOptional.get();
-                System.out.println(myLocker);
                 lockerListResponseDto.setMyLocker(
                         new MyLockerDto(myLocker.getRoomLocation(), myLocker.getColumn(), myLocker.getRow()));
             }

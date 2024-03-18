@@ -1,10 +1,8 @@
 package yu.cse.locker.domain.locker.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yu.cse.locker.domain.locker.dao.LockerRepository;
@@ -15,7 +13,6 @@ import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.user.application.UserService;
 import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
-import yu.cse.locker.global.exception.AlreadyExistUserException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
 import yu.cse.locker.global.exception.NotExistLockerException;
 
@@ -32,15 +29,8 @@ public class LockerService {
         User user = userService.getCurrentUser(currentUser)
                 .orElseThrow(() -> new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요"));
 
-        Locker currentUserLocker = getLockerByUser(user);
-
-        if (currentUserLocker != null) {
-            if (checkSameRequestLockerAndUserLocker(currentUserLocker, lockerRequestDto)) {
-                lockerRepository.deleteById(currentUserLocker.getLockerId());
-                return null;
-            } else {
-                throw new AlreadyExistLockerException("이미 사용중인 사물함이 있습니다.");
-            }
+        if (lockerRepository.findLockerByUser_StudentId(currentUser).isPresent()) {
+            throw new AlreadyExistLockerException("이미 사용중인 사물함이 있습니다.");
         }
 
         if (findLockerByLockerInformation(lockerRequestDto).isPresent()) {
@@ -57,21 +47,15 @@ public class LockerService {
         return lockerRepository.save(locker);
     }
 
-    public Locker getLockerByUser(User user) {
-        return lockerRepository.findLockerByUser(user);
-    }
-
     public Optional<Locker> getLockerByStudentId(String studentId) {
         return lockerRepository.findLockerByUser_StudentId(studentId);
     }
 
     @Transactional
     public void deleteLocker(String studentId) {
-//        User user = userService.getCurrentUser(studentId)
-//                .orElseThrow(() -> new NotAuthenticationException("유효한 토큰이 아닙니다. 로그인을 다시 진행 해주세요"));
 
         lockerRepository.findLockerByUser_StudentId(studentId)
-                .orElseThrow(() -> new NotExistLockerException("취소할 사물함 이 없습니다."));
+                .orElseThrow(() -> new NotExistLockerException("취소할 사물함이 없습니다."));
 
         lockerRepository.deleteLockerByUser_StudentId(studentId);
     }
@@ -90,15 +74,6 @@ public class LockerService {
                 .maxColumn(5)
                 .lockers(lockerResponseDtoList)
                 .build();
-    }
-
-    public boolean checkSameRequestLockerAndUserLocker(Locker userLocker, LockerRequestDto currentLocker) {
-        if (userLocker.getRoomLocation() == currentLocker.getRoomLocation()
-                && userLocker.getColumn() == currentLocker.getColumn()
-                && userLocker.getRow() == currentLocker.getRow()) {
-            return true;
-        }
-        return false;
     }
 
     public Optional<Locker> findLockerByLockerInformation(LockerRequestDto lockerRequestDto) {
