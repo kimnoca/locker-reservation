@@ -1,14 +1,10 @@
 package yu.cse.locker.domain.locker.api;
 
 
-import java.security.Security;
 import java.util.Optional;
-import java.util.concurrent.locks.Lock;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.security.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -22,12 +18,8 @@ import yu.cse.locker.domain.locker.domain.Locker;
 import yu.cse.locker.domain.locker.application.LockerService;
 import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
-import yu.cse.locker.domain.locker.dto.LockerResponseDto;
 import yu.cse.locker.domain.locker.dto.MyLockerDto;
-import yu.cse.locker.domain.user.application.UserService;
-import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.DefaultResponse;
-import yu.cse.locker.global.exception.AlreadyExistLockerException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
 
 @Controller
@@ -70,7 +62,7 @@ public class LockerController {
                 Locker myLocker = myLockerOptional.get();
                 System.out.println(myLocker);
                 lockerListResponseDto.setMyLocker(
-                        new MyLockerDto(myLocker.getRoomLocation(), myLocker.getRow(), myLocker.getColumn()));
+                        new MyLockerDto(myLocker.getRoomLocation(), myLocker.getColumn(), myLocker.getRow()));
             }
         }
 
