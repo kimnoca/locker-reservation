@@ -3,6 +3,9 @@ package yu.cse.locker.domain.user.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +29,7 @@ import yu.cse.locker.global.DefaultResponse;
 import yu.cse.locker.global.auth.TokenProvider;
 
 
+
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -36,10 +40,10 @@ public class UserController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-
     @PostMapping("/signup")
     public ResponseEntity<?> singUp(@RequestBody @Valid RegisterRequestDto RegisterRequestDto) {
         User user = userService.singUp(RegisterRequestDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(new DefaultResponse<>(201, "회원가입 성공",
                 new RegisterResponseDto(user.getStudentId(), user.getStudentName())));
     }

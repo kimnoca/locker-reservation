@@ -5,9 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -24,7 +22,6 @@ import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
 import yu.cse.locker.domain.locker.dto.MyLockerDto;
 import yu.cse.locker.global.DefaultResponse;
-import yu.cse.locker.global.exception.NotAuthenticationException;
 
 @Controller
 @RequiredArgsConstructor

@@ -15,6 +15,7 @@ import yu.cse.locker.domain.user.domain.User;
 import yu.cse.locker.global.exception.AlreadyExistLockerException;
 import yu.cse.locker.global.exception.NotAuthenticationException;
 import yu.cse.locker.global.exception.NotExistLockerException;
+import yu.cse.locker.global.utils.RoomLocation;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class LockerService {
 
     private final LockerRepository lockerRepository;
     private final UserService userService;
+    private final int MAX_COLUMN_SIZE = 5;
 
     @Transactional
     public Locker reservationLocker(LockerRequestDto lockerRequestDto, String currentUser) {
@@ -68,10 +70,16 @@ public class LockerService {
                 .map(locker -> new LockerResponseDto(locker.getRow(), locker.getColumn()))
                 .toList();
 
+        int maxRow = RoomLocation.getMaxRow(locationRoom);
+
+        if (maxRow == -1) {
+            throw new NotExistLockerException("잘못된 요청 입니다.");
+        }
+
         return LockerListResponseDto
                 .builder()
-                .maxRow(5)
-                .maxColumn(5)
+                .maxRow(maxRow)
+                .maxColumn(MAX_COLUMN_SIZE)
                 .lockers(lockerResponseDtoList)
                 .build();
     }
