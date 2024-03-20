@@ -2,8 +2,8 @@ package yu.cse.locker.global.utils;
 
 
 public enum RoomLocation {
-    LOCATION_115(115, 10),
-    LOCATION_116(116, 26),
+    LOCATION_115(115, 20),
+    LOCATION_116(116, 16),
     LOCATION_117(117, 10),
     LOCATION_123(123, 8),
     LOCATION_124(124, 12),
