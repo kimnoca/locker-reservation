@@ -14,19 +14,21 @@ public enum RoomLocation {
     LOCATION_323(323, 14);
 
     private final int locationCode;
-    private final int maxRow;
+    private final int maxColumn;
 
-    RoomLocation(int locationCode, int maxRow) {
+    RoomLocation(int locationCode, int maxColumn) {
         this.locationCode = locationCode;
-        this.maxRow = maxRow;
+        this.maxColumn = maxColumn;
     }
 
-    public static int getMaxRow(int locationCode) {
+    public static int getMaxColumn(int locationCode) {
         for (RoomLocation location : RoomLocation.values()) {
             if (location.locationCode == locationCode) {
-                return location.maxRow;
+                return location.maxColumn;
             }
         }
         return -1;
     }
 }
+
+

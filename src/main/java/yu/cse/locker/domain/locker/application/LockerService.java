@@ -23,7 +23,7 @@ public class LockerService {
 
     private final LockerRepository lockerRepository;
     private final UserService userService;
-    private final int MAX_COLUMN_SIZE = 5;
+    private final int MAX_ROW_SIZE = 5;
 
     @Transactional
     public Locker reservationLocker(LockerRequestDto lockerRequestDto, String currentUser) {
@@ -54,7 +54,7 @@ public class LockerService {
     }
 
     @Transactional
-    public void deleteLocker(String studentId) {
+     public void deleteLocker(String studentId) {
 
         lockerRepository.findLockerByUser_StudentId(studentId)
                 .orElseThrow(() -> new NotExistLockerException("취소할 사물함이 없습니다."));
@@ -70,16 +70,16 @@ public class LockerService {
                 .map(locker -> new LockerResponseDto(locker.getRow(), locker.getColumn()))
                 .toList();
 
-        int maxRow = RoomLocation.getMaxRow(locationRoom);
+        int maxColumn = RoomLocation.getMaxColumn(locationRoom);
 
-        if (maxRow == -1) {
+        if (maxColumn == -1) {
             throw new NotExistLockerException("잘못된 요청 입니다.");
         }
 
         return LockerListResponseDto
                 .builder()
-                .maxRow(maxRow)
-                .maxColumn(MAX_COLUMN_SIZE)
+                .maxRow(MAX_ROW_SIZE)
+                .maxColumn(maxColumn)
                 .lockers(lockerResponseDtoList)
                 .build();
     }
@@ -88,5 +88,4 @@ public class LockerService {
         return lockerRepository.findLockerByRoomLocationAndColumnAndRow(lockerRequestDto.getRoomLocation(),
                 lockerRequestDto.getColumn(), lockerRequestDto.getRow());
     }
-
 }
