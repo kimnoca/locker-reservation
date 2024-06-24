@@ -1,0 +1,48 @@
+spring:
+    profiles:
+        active:
+            - dev
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/nodedb?characterEncoding=UTF-8 # 추후 수정 예정
+        username: nodejs
+        password: 1234
+    jpa:
+        show-sql: true
+        generate-ddl: true
+        hibernate:
+            ddl-auto: create-drop
+    data:
+        redis:
+            port: 6379
+            host: 127.0.0.1
+
+jwt:
+    #    secret: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
+    secret: 5e7ae888548f2aef0935d46dad396c76031e333eb024c83a849cbadae7bb4aba3a3273ac5b108262b9f2d973fd36d300d2347b9826e7359a2bbec1df2c7fb05145ef8e5a640107ee540539d5069339b583acffbe381f272ccddb1ea8e7c3d39dcd7fb4212209d55fb2be03a012ede1ad2dfa868be1b956bd81f01b1b424786f2
+    token-validity-in-seconds: 86400
+
+---
+
+spring:
+    profiles:
+        active:
+            - deploy
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: # 배포 중지 후 RDS 삭제 완료
+        username:  # 배포 중지 후 RDS 삭제 완료
+        password:  # 배포 중지 후 RDS 삭제 완료
+    jpa:
+        show-sql: true
+        generate-ddl: true
+        hibernate:
+            ddl-auto: create-drop
+    data:
+        redis:
+            port: 6379
+            host:  # 배포 중지 후 EC2 삭제 완료
+
+jwt:
+    secret: 5e7ae888548f2aef0935d46dad396c76031e333eb024c83a849cbadae7bb4aba3a3273ac5b108262b9f2d973fd36d300d2347b9826e7359a2bbec1df2c7fb05145ef8e5a640107ee540539d5069339b583acffbe381f272ccddb1ea8e7c3d39dcd7fb4212209d55fb2be03a012ede1ad2dfa868be1b956bd81f01b1b424786f2
+    token-validity-in-seconds: 86400
