@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import yu.cse.locker.domain.locker.domain.Locker;
 import yu.cse.locker.domain.locker.application.LockerService;
+import yu.cse.locker.domain.locker.domain.Locker;
 import yu.cse.locker.domain.locker.dto.LockerListResponseDto;
 import yu.cse.locker.domain.locker.dto.LockerRequestDto;
 import yu.cse.locker.domain.locker.dto.MyLockerDto;
@@ -33,8 +33,7 @@ public class LockerController {
     @Transactional
     @PostMapping("/reservation")
     public ResponseEntity<?> reservationLockerNew(@RequestBody LockerRequestDto lockerRequestDto,
-                                                  @AuthenticationPrincipal
-                                                  User user) {
+                                                  @AuthenticationPrincipal User user) {
 
         Locker reservationLocker = lockerService.reservationLocker(lockerRequestDto, user.getUsername());
 

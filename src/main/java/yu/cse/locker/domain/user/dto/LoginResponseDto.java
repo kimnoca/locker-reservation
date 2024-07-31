@@ -15,7 +15,11 @@ public class LoginResponseDto {
     private String studentName;
     private String accessToken;
 
-    public LoginResponseDto(int roomLocation, int row, int column) {
+
+    public static LoginResponseDto of(String studentName, String accessToken) {
+        return LoginResponseDto.builder()
+                .studentName(studentName)
+                .accessToken(accessToken)
+                .build();
     }
-//    private String refreshToken 추후에 필요하면 구현 예정
 }

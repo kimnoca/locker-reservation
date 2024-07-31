@@ -10,16 +10,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import yu.cse.locker.global.auth.JwtAccessDeniedHandler;
 import yu.cse.locker.global.auth.JwtAuthenticationEntryPoint;
-import org.springframework.security.web.SecurityFilterChain;
 import yu.cse.locker.global.auth.JwtSecurityConfig;
 import yu.cse.locker.global.auth.TokenProvider;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig { // TODO : spring security version 대응 필요함
 
     private final TokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
