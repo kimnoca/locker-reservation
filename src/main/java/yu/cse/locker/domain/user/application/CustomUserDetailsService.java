@@ -1,14 +1,11 @@
 package yu.cse.locker.domain.user.application;
 
-import yu.cse.locker.domain.user.dao.UserRepository;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import org.springframework.stereotype.Service;
+import yu.cse.locker.domain.user.dao.UserRepository;
 
 
 @Service
