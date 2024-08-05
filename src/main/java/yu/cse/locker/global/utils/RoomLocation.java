@@ -1,6 +1,12 @@
 package yu.cse.locker.global.utils;
 
 
+import java.util.Arrays;
+import lombok.Getter;
+import yu.cse.locker.global.exception.NotExistLockerException;
+
+
+@Getter
 public enum RoomLocation {
     LOCATION_115(115, 20),
     LOCATION_116(116, 16),
@@ -21,13 +27,11 @@ public enum RoomLocation {
         this.maxColumn = maxColumn;
     }
 
-    public static int getMaxColumn(int locationCode) {
-        for (RoomLocation location : RoomLocation.values()) {
-            if (location.locationCode == locationCode) {
-                return location.maxColumn;
-            }
-        }
-        return -1;
+    public static int getMaxColumnFromLocationCode(int locationCode) {
+        return Arrays.stream(RoomLocation.values())
+                .filter(room -> room.locationCode == locationCode)
+                .findFirst().orElseThrow(() -> new NotExistLockerException("잘못된 요청 입니다."))
+                .getMaxColumn();
     }
 }
 

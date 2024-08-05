@@ -21,9 +21,10 @@ import yu.cse.locker.global.utils.RoomLocation;
 @RequiredArgsConstructor
 public class LockerService {
 
+    private static final int MAX_ROW_SIZE = 5;
+
     private final LockerRepository lockerRepository;
     private final UserService userService;
-    private final int MAX_ROW_SIZE = 5;
 
     @Transactional
     public Locker reservationLocker(LockerRequestDto lockerRequestDto, String currentUser) {
@@ -54,7 +55,7 @@ public class LockerService {
     }
 
     @Transactional
-     public void deleteLocker(String studentId) {
+    public void deleteLocker(String studentId) {
 
         lockerRepository.findLockerByUser_StudentId(studentId)
                 .orElseThrow(() -> new NotExistLockerException("취소할 사물함이 없습니다."));
@@ -70,16 +71,9 @@ public class LockerService {
                 .map(locker -> new LockerResponseDto(locker.getRow(), locker.getColumn()))
                 .toList();
 
-        int maxColumn = RoomLocation.getMaxColumn(locationRoom);
-
-        if (maxColumn == -1) {
-            throw new NotExistLockerException("잘못된 요청 입니다.");
-        }
-
-        return LockerListResponseDto
-                .builder()
+        return LockerListResponseDto.builder()
                 .maxRow(MAX_ROW_SIZE)
-                .maxColumn(maxColumn)
+                .maxColumn(RoomLocation.getMaxColumnFromLocationCode(locationRoom))
                 .lockers(lockerResponseDtoList)
                 .build();
     }
